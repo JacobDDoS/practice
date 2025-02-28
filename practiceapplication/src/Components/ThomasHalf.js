@@ -20,16 +20,17 @@ const headshots = [
 ]
 
 const ThomasHalf = () => {
-  const imgData = headshots.map(pic => (
-    <img
-      key={pic.id} 
-      src={pic.source} 
-      alt={`lebron team ${pic.id}`} 
-    />
-  ))
   return (
     <div className = "headshotContainer">
-        {imgData}
+      {
+        headshots.map(pic => (
+          <img
+            key={pic.id} 
+            src={pic.source} 
+            alt={`lebron team ${pic.id}`} 
+          />
+        ))
+      }
     </div>
   )
 }

@@ -12,110 +12,72 @@ const hexGen = () => {
   return randomHex() + randomHex() + randomHex();
 }
 
-//functions for buttons
-function Previous({prevColor, onPreviousClick}) {
-  return (
-    <button className="previous"
-      onClick={onPreviousClick}
-      style={{backgroundColor: prevColor}}>
-        {prevColor}
-      </button>
-  );
-}
-
-function Next({nextColor, onNextClick}) {
-  return (
-    <button className="next"
-      onClick={onNextClick}
-      style={{backgroundColor: nextColor}}>
-        {nextColor}
-      </button>
-  );
-}
 
 
-//set starting variables, colorArray constant
-let current = 0;
-let next = 1;
-let prev = 9;
-const colorArray = Array(10).fill().map(() => `#${hexGen()}`);
+//set colorArray using from instead of fill and map
+const colorArray = Array.from({length: 10}, () => `#${hexGen()}`);
 
 const EthanHalf = () => {
+  const [current, setCurrent] = useState(0);
+  const [selected, setSelected] = useState(false);
 
-  const [prevColor, setPrevColor] = useState(colorArray[prev]);
-  const [currentColor, setCurrentColor] = useState(colorArray[current]);
-  const [nextColor, setNextColor] = useState(colorArray[next]);
+  const prev = (current + 9) % 10;
+  const next = (current + 1) % 10;
 
   function handlePrevClick() {
-    if (current === 0) {
-      current = 9;
-    } else {
-      current--;
-    }
-
-    //after current is decremented to 0, jump prev from 0 to 9
-    if (current === 0) {
-      prev = 9;
-      next--;
-    // if current is 8, jump next to 9
-    } else if ( current === 8) {
-      next = 9;
-      prev--
-    } else {
-      prev--;
-      next--;
-    }
-    setPrevColor(colorArray[prev]);
-    setCurrentColor(colorArray[current]);
-    setNextColor(colorArray[next]);
+    setCurrent((index) => (index + 9) % 10);
   }
 
   function handleNextClick() {
-    if (current === 9) {
-      current = 0;
-    } else {
-      current++;
-    }
+    setCurrent((index) => (index + 1) % 10);
+  }
 
-    //similar code to handlePrevClick()
-    if (current === 9) {
-      next = 0;
-      prev++;
-    } else if (current === 1) {
-      prev = 0;
-      next++;
-    } else {
-      next++;
-      prev++;
-    }
-    setPrevColor(colorArray[prev]);
-    setCurrentColor(colorArray[current]);
-    setNextColor(colorArray[next]);
+  function handleSelect() {
+    setSelected(true);
   }
 
   return (
     //i was assigned the top half of the screen
-    //could probably do something with the button divs?
+    //
     <div style={{verticalAlign: "top", height: "50vh"}}>
-        
-        <div className="colorDiv" style={{backgroundColor: `${currentColor}`}}>
-          <h1>Choose Your Fighter</h1>
-          <p>Current Color: {currentColor}</p>
-          <p>Prev: {prevColor}</p>
-          <p>Next: {nextColor}</p>
-        </div>
-
-        <div className="buttons">
-
-          <div className="previousDiv" >
-            <Previous prevColor={prevColor} onPreviousClick={() => {handlePrevClick()}}/>
+        {selected ? (
+          <div>
+            <div style={{backgroundColor: colorArray[current] }}>
+            <h1>GOOD CHOICE</h1>
+              <button onClick={() => setSelected(false)}>Go Back</button>
+            </div>
           </div>
+        ) : (
+          <div>
+            <div className="colorDiv" style={{backgroundColor: colorArray[current] }}>
+              <h1>Choose Your Fighter</h1>
+              <p>Current Color: {colorArray[current]}</p>
+              <p>Prev: {colorArray[prev]}</p>
+              <p>Next: {colorArray[next]}</p>
 
-          <div className="nextDiv" style={{backgroundColor: `${nextColor}`}}>
-            <Next nextColor={nextColor} onNextClick={() => {handleNextClick()}}/>
+              <button className='select'
+                onClick={handleSelect}>
+                  Select
+              </button>
+            </div>
+
+            <div className="buttons">
+              <button className="previous"
+                onClick={handlePrevClick}
+                style={{backgroundColor: colorArray[prev]}}>
+                  {colorArray[prev]}
+              </button>
+
+              <button className="next"
+                onClick={handleNextClick}
+                style={{backgroundColor: colorArray[next]}}>
+                  {colorArray[next]}
+              </button>
+
+            </div>
+
           </div>
-
-        </div>
+      )}
     </div>
   )
 }
